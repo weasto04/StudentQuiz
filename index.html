@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>Random Forest Quiz</title>
+	<link rel="stylesheet" href="style.css" />
+	<meta name="description" content="Simple quiz to test intuition about Random Forest majority voting over small decision trees." />
+</head>
+<body>
+	<header>
+		<h1>Random Forest Quiz</h1>
+		<p class="tagline">Look at the trees. Predict the forest.</p>
+	</header>
+
+	<main>
+		<section id="controls" class="card">
+			<div class="row">
+				<label for="treeCount">Number of Trees (odd):</label>
+				<input id="treeCount" type="number" min="3" max="15" step="2" value="5" />
+				<button id="newQuestionBtn" class="primary">New Question</button>
+			</div>
+			<div class="row">
+				<span class="point-desc" id="pointDescription"></span>
+			</div>
+			<div class="row guess-row">
+				<button class="guess-btn" data-class="0">Predict Red</button>
+				<button class="guess-btn" data-class="1">Predict Blue</button>
+			</div>
+			<div id="feedback" aria-live="polite"></div>
+		</section>
+
+		<section id="treesSection">
+			<h2>Trees</h2>
+			<div id="treesContainer" class="trees-grid" aria-live="polite"></div>
+		</section>
+
+		<section id="votesSection" class="hidden">
+			<h2>Votes</h2>
+			<div id="votesContainer" class="votes-grid"></div>
+			<p id="forestResult" class="forest-result"></p>
+		</section>
+	</main>
+
+	<footer></footer>
+
+	<script src="script.js"></script>
+</body>
+</html>
