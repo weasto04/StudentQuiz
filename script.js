@@ -6,6 +6,31 @@
 (function() {
   'use strict';
 
+  // Startup log to help diagnose blank page deployments
+  console.log('[RandomForestQuiz] Script loaded, initializing...');
+
+  // Expose early error feedback in the DOM instead of silent failure
+  window.addEventListener('error', (e) => {
+    try {
+      const fb = document.getElementById('feedback');
+      if (fb) {
+        fb.textContent = 'A script error occurred: ' + (e.message || 'Unknown');
+        fb.className = 'incorrect';
+      }
+      console.error('[RandomForestQuiz] Global error caught:', e.error || e.message);
+    } catch(_) {}
+  });
+  window.addEventListener('unhandledrejection', (e) => {
+    try {
+      const fb = document.getElementById('feedback');
+      if (fb) {
+        fb.textContent = 'A promise error occurred: ' + (e.reason && e.reason.message ? e.reason.message : 'Unknown');
+        fb.className = 'incorrect';
+      }
+      console.error('[RandomForestQuiz] Unhandled rejection:', e.reason);
+    } catch(_) {}
+  });
+
   // Configurable feature space: We'll use two numerical features x1 and x2 ~ Uniform(0, 1).
   // Trees are depth 2: root split on either x1 or x2 with a threshold; leaves assign constant class.
   // To keep it educational, thresholds are chosen from a discrete grid for easy mental reasoning.
@@ -65,7 +90,17 @@
   const votesSection = document.getElementById('votesSection');
 
   function renderPoint() {
-    pointDescriptionEl.textContent = `Test point: x1 = ${state.point.x1.toFixed(2)}, x2 = ${state.point.x2.toFixed(2)}`;
+    const x1 = state.point.x1.toFixed(2);
+    const x2 = state.point.x2.toFixed(2);
+  // Use innerHTML for styled badges (safe: controlled values)
+  pointDescriptionEl.classList.add('point-desc');
+  pointDescriptionEl.innerHTML = `<span class="point-desc-label">Test point:</span><span class="point-values"><span class="pval pval-x1" id="pvalX1"><span>x1</span>${x1}</span><span class="pval pval-x2" id="pvalX2"><span>x2</span>${x2}</span></span>`;
+    // retrigger animation
+    requestAnimationFrame(() => {
+      const a = document.getElementById('pvalX1');
+      const b = document.getElementById('pvalX2');
+      [a,b].forEach(el => { if(!el) return; el.classList.remove('flash'); void el.offsetWidth; el.classList.add('flash'); });
+    });
   }
 
   function renderTrees(hideVotes) {
@@ -162,4 +197,7 @@
   // Initialize
   bindEvents();
   newQuestion();
+  const ph = document.getElementById('initPlaceholder');
+  if (ph) ph.remove();
+  console.log('[RandomForestQuiz] Initialization complete.');
 })();
